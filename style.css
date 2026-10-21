@@ -1,1 +1,339 @@
 
+/* ==================== RESET & PENGATURAN DASAR ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333333;
+    padding-bottom: 90px; /* Memberikan ruang agar konten bawah tidak tertutup cart bar */
+}
+
+/* ==================== HEADER & NAVIGASI ==================== */
+.header {
+    background-color: #ffffff;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.brand-title {
+    font-size: 1.4rem;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.brand-tagline {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+}
+
+/* Kotak Pencarian */
+.search-box {
+    margin-bottom: 12px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #dcdde1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.search-box input:focus {
+    border-color: #3498db;
+}
+
+/* Tombol Filter Kategori */
+.category-nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto; /* Bisa digeser ke samping jika kategori banyak */
+    padding-bottom: 4px;
+}
+
+.category-nav::-webkit-scrollbar {
+    display: none; /* Menyembunyikan scrollbar di HP agar lebih rapi */
+}
+
+.category-btn {
+    background-color: #f1f2f6;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: #57606f;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.category-btn.active {
+    background-color: #2f3542;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* ==================== KONTEN UTAMA & GRID MENU ==================== */
+.container {
+    max-width: 600px; /* Batasi lebar maksimum agar rapi di tablet/desktop */
+    margin: 0 auto;
+    padding: 16px;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Default 1 kolom untuk HP */
+    gap: 16px;
+}
+
+/* Desain Kartu Menu (Food Card) */
+.menu-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    display: flex;
+    transition: transform 0.2s;
+}
+
+.menu-card:active {
+    transform: scale(0.98); /* Efek tombol ditekan */
+}
+
+.menu-img {
+    width: 110px;
+    height: 110px;
+    object-fit: cover; /* Memastikan gambar tidak gepeng */
+}
+
+.menu-details {
+    padding: 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.menu-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2f3542;
+    margin-bottom: 4px;
+}
+
+.menu-desc {
+    font-size: 0.8rem;
+    color: #747d8c;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Batasi teks deskripsi maksimal 2 baris */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.menu-footer-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu-price {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #e74c3c;
+}
+
+.btn-add {
+    background-color: #ff4757;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-add:hover {
+    background-color: #ff6b81;
+}
+
+/* ==================== KERANJANG MELAYANG (CART BAR) ==================== */
+.cart-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #2f3542;
+    color: white;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 200;
+    transition: transform 0.3s ease;
+}
+
+/* Menyembunyikan cart bar jika keranjang kosong (bisa diatur via JS) */
+.cart-bar.hidden {
+    transform: translateY(100%);
+}
+
+.cart-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.cart-count {
+    font-size: 0.8rem;
+    color: #ced6e0;
+}
+
+.cart-total {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.btn-checkout {
+    background-color: #2ed573;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.btn-checkout:hover {
+    background-color: #7bed9f;
+    color: #2f3542;
+}
+
+/* ==================== MODAL POPUP RINCIAN PESANAN ==================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Muncul dari bawah seperti lembaran popup HP */
+    z-index: 300;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background-color: white;
+    width: 100%;
+    max-width: 600px;
+    max-height: 80vh;
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f2f6;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+.modal-header h2 {
+    font-size: 1.2rem;
+    color: #2f3542;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #747d8c;
+}
+
+.cart-items-list {
+    overflow-y: auto;
+    flex: 1;
+    margin-bottom: 12px;
+}
+
+.empty-cart-msg {
+    text-align: center;
+    color: #a4b0be;
+    padding: 20px 0;
+}
+
+.modal-footer {
+    border-top: 1px solid #f1f2f6;
+    padding-top: 12px;
+}
+
+.total-price-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+}
+
+.order-note {
+    font-size: 0.75rem;
+    color: #ffa502;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.btn-primary-block {
+    width: 100%;
+    background-color: #ff4757;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* ==================== FOOTER ==================== */
+.footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.8rem;
+    color: #a4b0be;
+}
