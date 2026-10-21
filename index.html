@@ -1,25 +1,24 @@
-<!DOCTYPE1 html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-    <!-- Pengaturan Karakter & Responsivitas untuk Tampilan Mobile/HP -->
+    <!-- Pengaturan Karakter & Responsivitas Tampilan HP/Mobile -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Digital Kafe Keren</title>
+    <title>Menu Digital & Pemesanan Mandiri Kafe</title>
 
-    <!-- Menghubungkan File CSS Eksternal untuk Desain dan Tampilan -->
+    <!-- Menghubungkan File CSS Eksternal -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- ==================== HEADER & BAR NAVIGASI ==================== -->
+    <!-- ==================== HEADER & NAVIGASI ==================== -->
     <header class="header">
         <div class="logo-container">
-            <!-- Nama Kafe / Logo -->
             <h1 class="brand-title">☕ KopiKita Cafe</h1>
-            <p class="brand-tagline">Pindai, Pilih, dan Nikmati Hidanganmu!</p>
+            <p class="brand-tagline">Pindai, Pilih, dan Pesan Langsung dari Mejamu!</p>
         </div>
 
-        <!-- Fitur Pencarian Makanan/Minuman -->
+        <!-- Kolom Pencarian Menu Real-Time -->
         <div class="search-box">
             <input 
                 type="text" 
@@ -38,20 +37,14 @@
         </nav>
     </header>
 
-    <!-- ==================== KONTEN UTAMA (DAFTAR MENU) ==================== -->
+    <!-- ==================== KONTEN UTAMA (GRID MENU) ==================== -->
     <main class="container">
-        <!-- Area Grid Tempat Daftar Menu Akan Dimuat secara Dinamis via JavaScript -->
-        <section id="menu-grid" class="menu-grid">
-            <!-- 
-                Catatan: Kartu menu (menu cards) tidak di-hardcode di sini, 
-                melainkan dibentuk otomatis oleh file script.js dari data JSON/Array.
-            -->
-        </section>
+        <!-- Area tempat item menu akan dirender oleh JavaScript -->
+        <section id="menu-grid" class="menu-grid"></section>
     </main>
 
-    <!-- ==================== RINGKASAN PESANAN (KERANJANG / CART) ==================== -->
-    <!-- Elemen Melayang (Floating Bar) di Bagian Bawah Layar HP -->
-    <aside class="cart-bar" id="cart-bar">
+    <!-- ==================== FLOATING CART BAR (RINGKASAN BAWAH) ==================== -->
+    <aside class="cart-bar hidden" id="cart-bar">
         <div class="cart-info">
             <span class="cart-count" id="cart-count">0 Item</span>
             <span class="cart-total" id="cart-total">Rp 0</span>
@@ -61,36 +54,76 @@
         </button>
     </aside>
 
-    <!-- Modal Popup Detail Pesanan -->
+    <!-- ==================== MODAL 1: RINCIAN & KONFIRMASI PESANAN ==================== -->
     <div class="modal-overlay" id="cart-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>📋 Rincian Pesanan Anda</h2>
+                <h2>📋 Konfirmasi Pesanan</h2>
                 <button class="close-btn" onclick="toggleCartModal()">&times;</button>
             </div>
 
-            <!-- Daftar item yang dipilih akan ditampilkan di sini oleh JavaScript -->
+            <!-- Input Nomor Meja (Otomatis dari QR URL atau Diisi Manual) -->
+            <div class="table-number-box">
+                <label for="table-input">Nomor Meja Anda:</label>
+                <input type="text" id="table-input" placeholder="Contoh: Meja 05">
+            </div>
+
+            <!-- Daftar Item yang Dipilih -->
             <div class="cart-items-list" id="cart-items-list">
                 <p class="empty-cart-msg">Keranjang Anda masih kosong.</p>
             </div>
 
+            <!-- Rincian Pembayaran (Subtotal, PPN, Grand Total) -->
             <div class="modal-footer">
                 <div class="total-price-row">
-                    <span>Total Estimasi:</span>
+                    <span>Subtotal:</span>
+                    <strong id="modal-subtotal">Rp 0</strong>
+                </div>
+                <div class="total-price-row tax-row">
+                    <span>PPN (10%):</span>
+                    <span id="modal-tax">Rp 0</span>
+                </div>
+                <div class="total-price-row grand-total-row">
+                    <span>Total Bayar:</span>
                     <strong id="modal-total-price">Rp 0</strong>
                 </div>
-                <p class="order-note">*Tunjukkan layar ini kepada kasir/pelayan saat memesan.</p>
-                <button class="btn-primary-block" onclick="resetCart()">Reset Pesanan</button>
+                
+                <button class="btn-primary-block" onclick="processOrder()">Kirim Pesanan Sekarang 🚀</button>
             </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 2: STRUK PEMBAYARAN DIGITAL ==================== -->
+    <div class="modal-overlay" id="receipt-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🧾 Struk Pesanan Digital</h2>
+                <button class="close-btn" onclick="closeReceipt()">&times;</button>
+            </div>
+            
+            <!-- Tampilan Struk Kasir -->
+            <div id="receipt-content" class="receipt-paper">
+                <div class="receipt-header">
+                    <strong>☕ KopiKita Cafe</strong><br>
+                    <span>Jl. Merdeka No. 45, Malang</span><br>
+                    <small>Telp: (0341) 555-0199</small><br>
+                    <div class="receipt-divider">-----------------------------------</div>
+                </div>
+                <div id="receipt-details">
+                    <!-- Detail item, PPN, dan Total diisi otomatis oleh JavaScript -->
+                </div>
+            </div>
+
+            <button class="btn-primary-block btn-success" onclick="finishAndReset()">Selesai & Pesan Lagi</button>
         </div>
     </div>
 
     <!-- ==================== FOOTER ==================== -->
     <footer class="footer">
-        <p>&copy; 2024 KopiKita Cafe. Solusi Menu Digital GitHub Pages.</p>
+        <p>&copy; 2026 KopiKita Cafe. Solusi Menu Digital GitHub Pages.</p>
     </footer>
 
-    <!-- Menghubungkan File JavaScript Eksternal untuk Interaktivitas -->
+    <!-- Menghubungkan File JavaScript Eksternal -->
     <script src="script.js"></script>
 </body>
 </html>
