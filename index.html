@@ -1,0 +1,96 @@
+<!DOCTYPE1 html>
+<html lang="id">
+<head>
+    <!-- Pengaturan Karakter & Responsivitas untuk Tampilan Mobile/HP -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Digital Kafe Keren</title>
+
+    <!-- Menghubungkan File CSS Eksternal untuk Desain dan Tampilan -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ==================== HEADER & BAR NAVIGASI ==================== -->
+    <header class="header">
+        <div class="logo-container">
+            <!-- Nama Kafe / Logo -->
+            <h1 class="brand-title">☕ KopiKita Cafe</h1>
+            <p class="brand-tagline">Pindai, Pilih, dan Nikmati Hidanganmu!</p>
+        </div>
+
+        <!-- Fitur Pencarian Makanan/Minuman -->
+        <div class="search-box">
+            <input 
+                type="text" 
+                id="search-input" 
+                placeholder="Cari makanan atau minuman..."
+                aria-label="Cari Menu"
+            >
+        </div>
+
+        <!-- Tombol Filter Kategori -->
+        <nav class="category-nav">
+            <button class="category-btn active" data-category="semua">Semua</button>
+            <button class="category-btn" data-category="makanan">Makanan</button>
+            <button class="category-btn" data-category="minuman">Minuman</button>
+            <button class="category-btn" data-category="camilan">Camilan</button>
+        </nav>
+    </header>
+
+    <!-- ==================== KONTEN UTAMA (DAFTAR MENU) ==================== -->
+    <main class="container">
+        <!-- Area Grid Tempat Daftar Menu Akan Dimuat secara Dinamis via JavaScript -->
+        <section id="menu-grid" class="menu-grid">
+            <!-- 
+                Catatan: Kartu menu (menu cards) tidak di-hardcode di sini, 
+                melainkan dibentuk otomatis oleh file script.js dari data JSON/Array.
+            -->
+        </section>
+    </main>
+
+    <!-- ==================== RINGKASAN PESANAN (KERANJANG / CART) ==================== -->
+    <!-- Elemen Melayang (Floating Bar) di Bagian Bawah Layar HP -->
+    <aside class="cart-bar" id="cart-bar">
+        <div class="cart-info">
+            <span class="cart-count" id="cart-count">0 Item</span>
+            <span class="cart-total" id="cart-total">Rp 0</span>
+        </div>
+        <button class="btn-checkout" id="btn-checkout" onclick="toggleCartModal()">
+            Lihat Pesanan
+        </button>
+    </aside>
+
+    <!-- Modal Popup Detail Pesanan -->
+    <div class="modal-overlay" id="cart-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 Rincian Pesanan Anda</h2>
+                <button class="close-btn" onclick="toggleCartModal()">&times;</button>
+            </div>
+
+            <!-- Daftar item yang dipilih akan ditampilkan di sini oleh JavaScript -->
+            <div class="cart-items-list" id="cart-items-list">
+                <p class="empty-cart-msg">Keranjang Anda masih kosong.</p>
+            </div>
+
+            <div class="modal-footer">
+                <div class="total-price-row">
+                    <span>Total Estimasi:</span>
+                    <strong id="modal-total-price">Rp 0</strong>
+                </div>
+                <p class="order-note">*Tunjukkan layar ini kepada kasir/pelayan saat memesan.</p>
+                <button class="btn-primary-block" onclick="resetCart()">Reset Pesanan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <p>&copy; 2024 KopiKita Cafe. Solusi Menu Digital GitHub Pages.</p>
+    </footer>
+
+    <!-- Menghubungkan File JavaScript Eksternal untuk Interaktivitas -->
+    <script src="script.js"></script>
+</body>
+</html>
