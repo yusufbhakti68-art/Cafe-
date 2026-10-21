@@ -1,6 +1,4 @@
-
 /* ==================== DATA MENU KAFE (DATABASE LOKAL) ==================== */
-// Menyimpan daftar menu dalam bentuk array objek agar mudah dikelola dan ditampilkan
 const menuData = [
     {
         id: 1,
@@ -20,7 +18,7 @@ const menuData = [
     },
     {
         id: 3,
-        name: "Nasi Goreng Spesial KopiKita",
+        name: "Nasi Goreng Spesial",
         category: "makanan",
         price: 25000,
         description: "Nasi goreng gurih dengan suwiran ayam, telur mata sapi, dan kerupuk.",
@@ -52,7 +50,7 @@ const menuData = [
     }
 ];
 
-// Array untuk menyimpan item yang dipilih pelanggan ke dalam keranjang
+// Array Penyimpan Keranjang Belanja
 let cart = [];
 
 /* ==================== ELEMEN DOM HTML ==================== */
@@ -64,25 +62,38 @@ const cartCount = document.getElementById("cart-count");
 const cartTotal = document.getElementById("cart-total");
 const cartModal = document.getElementById("cart-modal");
 const cartItemsList = document.getElementById("cart-items-list");
-const modalTotalPrice = document.getElementById("modal-total-price");
 
-/* ==================== FUNGSI FORMAT MATA UANG RUPIAH ==================== */
+/* ==================== FUNGSIONALITAS APLIKASI ==================== */
+
+// Format angka ke mata uang Rupiah
 function formatRupiah(angka) {
     return "Rp " + angka.toLocaleString("id-ID");
 }
 
-/* ==================== FUNGSI RENDER / MENAMPILKAN MENU ==================== */
+// Deteksi otomatis Nomor Meja dari URL parameter saat halaman dimuat
+// Contoh URL: https://namatoko.github.io/menu/?meja=05
+window.addEventListener("DOMContentLoaded", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tableParam = urlParams.get("meja");
+    const tableInput = document.getElementById("table-input");
+
+    if (tableParam && tableInput) {
+        tableInput.value = `Meja ${tableParam}`;
+        tableInput.disabled = true; // Kunci input agar tidak diubah pelanggan
+    }
+
+    displayMenu(menuData);
+});
+
+// Menampilkan kartu menu di layar
 function displayMenu(itemsToDisplay) {
-    // Kosongkan area grid terlebih dahulu sebelum merender ulang
     menuGrid.innerHTML = "";
 
-    // Jika menu tidak ditemukan saat dicari
     if (itemsToDisplay.length === 0) {
         menuGrid.innerHTML = `<p style="text-align: center; color: #a4b0be; grid-column: 1 / -1; padding: 20px;">Menu tidak ditemukan.</p>`;
         return;
     }
 
-    // Looping setiap data menu untuk dijadikan elemen HTML kartu menu
     itemsToDisplay.forEach(item => {
         const card = document.createElement("div");
         card.classList.add("menu-card");
@@ -105,20 +116,17 @@ function displayMenu(itemsToDisplay) {
     });
 }
 
-/* ==================== FITUR PENCARIAN & FILTER KATEGORI ==================== */
-// Variabel status filter aktif saat ini
+/* ==================== PENCARIAN & FILTER KATEGORI ==================== */
 let currentCategory = "semua";
 let currentSearchKeyword = "";
 
 function filterAndSearchMenu() {
     let filtered = menuData;
 
-    // Filter berdasarkan kategori
     if (currentCategory !== "semua") {
         filtered = filtered.filter(item => item.category === currentCategory);
     }
 
-    // Filter berdasarkan kata kunci pencarian
     if (currentSearchKeyword.trim() !== "") {
         filtered = filtered.filter(item => 
             item.name.toLowerCase().includes(currentSearchKeyword) ||
@@ -129,18 +137,14 @@ function filterAndSearchMenu() {
     displayMenu(filtered);
 }
 
-// Event listener untuk kotak pencarian (ketik teks)
 searchInput.addEventListener("input", (e) => {
     currentSearchKeyword = e.target.value.toLowerCase();
     filterAndSearchMenu();
 });
 
-// Event listener untuk tombol kategori
 categoryButtons.forEach(button => {
     button.addEventListener("click", (e) => {
-        // Hapus class 'active' dari semua tombol kategori
         categoryButtons.forEach(btn => btn.classList.remove("active"));
-        // Tambahkan class 'active' ke tombol yang sedang ditekan
         e.target.classList.add("active");
 
         currentCategory = e.target.getAttribute("data-category");
@@ -148,20 +152,15 @@ categoryButtons.forEach(button => {
     });
 });
 
-/* ==================== LOGIKA KERANJANG BELANJA (CART) ==================== */
+/* ==================== LOGIKA KERANJANG & PPN 10% ==================== */
 function addToCart(itemId) {
     const product = menuData.find(item => item.id === itemId);
-    
-    // Cek apakah item sudah ada di dalam keranjang
     const existingItem = cart.find(item => item.id === itemId);
 
     if (existingItem) {
         existingItem.quantity += 1;
     } else {
-        cart.push({
-            ...product,
-            quantity: 1
-        });
+        cart.push({ ...product, quantity: 1 });
     }
 
     updateCartUI();
@@ -169,19 +168,26 @@ function addToCart(itemId) {
 
 function updateCartUI() {
     let totalItems = 0;
-    let totalPrice = 0;
+    let subtotal = 0;
 
     cart.forEach(item => {
         totalItems += item.quantity;
-        totalPrice += item.price * item.quantity;
+        subtotal += item.price * item.quantity;
     });
 
-    // Perbarui teks informasi di bilah melayang bawah (cart-bar)
-    cartCount.innerText = `${totalItems} Item`;
-    cartTotal.innerText = formatRupiah(totalPrice);
-    modalTotalPrice.innerText = formatRupiah(totalPrice);
+    // Perhitungan PPN (10%) & Total Bayar
+    let tax = subtotal * 0.10;
+    let grandTotal = subtotal + tax;
 
-    // Tampilkan atau sembunyikan cart-bar jika keranjang kosong/ada isinya
+    // Update Tampilan Floating Cart Bar
+    cartCount.innerText = `${totalItems} Item`;
+    cartTotal.innerText = formatRupiah(grandTotal);
+
+    // Update Tampilan Rincian di Modal Konfirmasi
+    document.getElementById("modal-subtotal").innerText = formatRupiah(subtotal);
+    document.getElementById("modal-tax").innerText = formatRupiah(tax);
+    document.getElementById("modal-total-price").innerText = formatRupiah(grandTotal);
+
     if (totalItems > 0) {
         cartBar.classList.remove("hidden");
     } else {
@@ -222,8 +228,6 @@ function changeQuantity(itemId, amount) {
     
     if (itemIndex !== -1) {
         cart[itemIndex].quantity += amount;
-        
-        // Jika kuantitas 0 atau kurang, hapus item dari keranjang
         if (cart[itemIndex].quantity <= 0) {
             cart.splice(itemIndex, 1);
         }
@@ -232,18 +236,77 @@ function changeQuantity(itemId, amount) {
     updateCartUI();
 }
 
-/* ==================== PENGATURAN MODAL POPUP & RESET ==================== */
+/* ==================== PEMROSESAN PESANAN & STRUK DIGITAL ==================== */
 function toggleCartModal() {
     cartModal.classList.toggle("active");
 }
 
-function resetCart() {
-    cart = [];
-    updateCartUI();
+function processOrder() {
+    if (cart.length === 0) return;
+
+    const tableInput = document.getElementById("table-input").value || "Meja Umum";
+    const receiptDetails = document.getElementById("receipt-details");
+    
+    let subtotal = 0;
+    let now = new Date();
+    let timeString = now.toLocaleDateString("id-ID") + " " + now.toLocaleTimeString("id-ID");
+
+    let itemsHtml = `
+        <div style="margin-bottom: 6px;">
+            <strong>No. Meja :</strong> ${tableInput}<br>
+            <strong>Waktu    :</strong> ${timeString}
+        </div>
+        <div class="receipt-divider">-----------------------------------</div>
+    `;
+
+    cart.forEach(item => {
+        let itemTotal = item.price * item.quantity;
+        subtotal += itemTotal;
+        itemsHtml += `
+            <div style="display: flex; justify-content: space-between;">
+                <span>${item.name} x${item.quantity}</span>
+                <span>${formatRupiah(itemTotal)}</span>
+            </div>
+        `;
+    });
+
+    let tax = subtotal * 0.10;
+    let grandTotal = subtotal + tax;
+
+    itemsHtml += `
+        <div class="receipt-divider">-----------------------------------</div>
+        <div style="display: flex; justify-content: space-between;">
+            <span>Subtotal</span>
+            <span>${formatRupiah(subtotal)}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span>PPN (10%)</span>
+            <span>${formatRupiah(tax)}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-weight: bold; margin-top: 4px;">
+            <span>TOTAL BAYAR</span>
+            <span>${formatRupiah(grandTotal)}</span>
+        </div>
+        <div class="receipt-divider">-----------------------------------</div>
+        <div style="text-align: center; margin-top: 8px;">
+            <p>Terima Kasih!</p>
+            <small>*Pesanan Anda telah diteruskan ke dapur*</small>
+        </div>
+    `;
+
+    receiptDetails.innerHTML = itemsHtml;
+
+    // Tutup modal keranjang dan tampilkan struk digital
     toggleCartModal();
+    document.getElementById("receipt-modal").classList.add("active");
 }
 
-/* ==================== INISIALISASI AWAL SAAT HALAMAN DIBUKA ==================== */
-// Menjalankan fungsi tampilan menu pertama kali saat halaman selesai dimuat
-displayMenu(menuData);
-cartBar.classList.add("hidden"); // Sembunyikan cart bar di awal
+function closeReceipt() {
+    document.getElementById("receipt-modal").classList.remove("active");
+}
+
+function finishAndReset() {
+    cart = [];
+    updateCartUI();
+    closeReceipt();
+}
